@@ -7,5 +7,5 @@ Make sure you have [deno](https://deno.land/manual@v1.11.2/getting_started/insta
 ## Usage
 
 ```sh
-XENDIT_API_KEY=xxx deno run --allow-net --allow-env simulate_va_payment.ts <bankCode> <bankAccountNumber> <transferAmount>
+XENDIT_API_KEY=xxx deno run --allow-net --allow-env simulate_va_payment.ts
 ```

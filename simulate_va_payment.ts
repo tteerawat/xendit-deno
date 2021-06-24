@@ -1,12 +1,12 @@
-const apiKey = Deno.env.get("XENDIT_API_KEY");
+const apiKey: string | undefined = Deno.env.get("XENDIT_API_KEY");
 
-if (apiKey === undefined) {
+if (typeof apiKey === "undefined") {
   throw new Error("XENDIT_API_KEY is missing!");
 }
 
-const bankCode = Deno.args[0];
-const bankAccountNumber = Deno.args[1];
-const transferAmount = Deno.args[2];
+const bankCode = prompt("bank code:");
+const bankAccountNumber = prompt("bank account number:");
+const transferAmount = prompt("transfer amount:");
 
 const headers = new Headers({
   "Authorization": "Basic " + btoa(apiKey + ":"),
@@ -28,7 +28,11 @@ const request = new Request(
   },
 );
 
-fetch(request)
-  .then((response) => response.json())
-  .then((json) => console.log(json))
-  .catch((error) => console.error(error));
+try {
+  console.log("Simulating VA payment...");
+  const response = await fetch(request);
+  const jsonData = await response.json();
+  console.log(jsonData);
+} catch (error) {
+  console.error(error);
+}
