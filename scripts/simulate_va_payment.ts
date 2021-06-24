@@ -1,12 +1,14 @@
+import { getUserInput } from "./helpers.ts";
+
 const apiKey: string | undefined = Deno.env.get("XENDIT_API_KEY");
 
 if (typeof apiKey === "undefined") {
   throw new Error("XENDIT_API_KEY is missing!");
 }
 
-const bankCode = prompt("bank code:");
-const bankAccountNumber = prompt("bank account number:");
-const transferAmount = prompt("transfer amount:");
+const bankCode: string = getUserInput("bank code:");
+const bankAccountNumber: string = getUserInput("bank account number:");
+const transferAmount: string = getUserInput("transfer amount:");
 
 const headers = new Headers({
   "Authorization": "Basic " + btoa(apiKey + ":"),
