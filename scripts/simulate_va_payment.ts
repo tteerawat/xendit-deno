@@ -1,9 +1,11 @@
 import { getUserInput } from "./helpers.ts";
+import { brightBlue, green, red } from "../deps.ts";
 
 const apiKey: string | undefined = Deno.env.get("XENDIT_API_KEY");
 
 if (typeof apiKey === "undefined") {
-  throw new Error("XENDIT_API_KEY is missing!");
+  console.error(red("XENDIT_API_KEY is missing!"));
+  Deno.exit(1);
 }
 
 const bankCode: string = getUserInput("bank code:");
@@ -31,10 +33,16 @@ const request = new Request(
 );
 
 try {
-  console.log("Simulating VA payment...");
+  console.log(brightBlue("Simulating VA payment..."));
   const response = await fetch(request);
   const jsonData = await response.json();
-  console.log(jsonData);
+  const message: string = jsonData.message;
+
+  if (response.ok) {
+    console.log(green(message));
+  } else {
+    console.log(red(message));
+  }
 } catch (error) {
-  console.error(error);
+  console.error(red("error:"), error);
 }
