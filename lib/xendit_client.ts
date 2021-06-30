@@ -1,46 +1,16 @@
-export class XenditClient {
-  public apiKey: string;
-  private baseUrl: string;
-
-  constructor(apiKey: string, baseUrl = "https://api.xendit.co") {
-    this.apiKey = apiKey;
-    this.baseUrl = baseUrl;
-  }
-
-  public async getEWalletCharge(
-    chargeID: string,
-  ) {
-    return await this.fetchJSON(
-      "GET",
-      `/ewallets/charges/${chargeID}`,
-    );
-  }
-
-  public async simulateVAPayment(
-    bankCode: string,
-    bankAccountNumber: string,
-    transferAmount: string | number,
-  ) {
-    return await this.fetchJSON(
-      "POST",
-      "/pool_virtual_accounts/simulate_payment",
-      {
-        "bank_code": bankCode,
-        "bank_account_number": bankAccountNumber,
-        "transfer_amount": transferAmount,
-      },
-    );
-  }
-
-  private async fetchJSON(
+export function xenditClient(
+  apiKey: string,
+  baseUrl = "https://api.xendit.co",
+) {
+  async function fetchJSON(
     method: string,
     endpoint: string,
     bodyObject?: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    const url = this.baseUrl + endpoint;
+    const url = baseUrl + endpoint;
 
     const headers = new Headers({
-      "Authorization": "Basic " + btoa(this.apiKey + ":"),
+      "Authorization": "Basic " + btoa(apiKey + ":"),
       "Content-Type": "application/json",
     });
 
@@ -49,7 +19,34 @@ export class XenditClient {
       headers,
       body: JSON.stringify(bodyObject),
     });
-    const json = await response.json();
-    return json;
+
+    return response.json();
   }
+
+  return {
+    getEWalletCharge: function (
+      chargeID: string,
+    ) {
+      return fetchJSON(
+        "GET",
+        `/ewallets/charges/${chargeID}`,
+      );
+    },
+
+    simulateVAPayment: function (
+      bankCode: string,
+      bankAccountNumber: string,
+      transferAmount: string | number,
+    ) {
+      return fetchJSON(
+        "POST",
+        "/pool_virtual_accounts/simulate_payment",
+        {
+          "bank_code": bankCode,
+          "bank_account_number": bankAccountNumber,
+          "transfer_amount": transferAmount,
+        },
+      );
+    },
+  };
 }
