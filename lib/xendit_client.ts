@@ -1,28 +1,52 @@
-export class XenditClient {
-  apiKey: string;
-  baseUrl: string;
-
-  constructor(apiKey: string, baseUrl = "https://api.xendit.co") {
-    this.apiKey = apiKey;
-    this.baseUrl = baseUrl;
-  }
-
-  fetch(
+export function xenditClient(
+  apiKey: string,
+  baseUrl = "https://api.xendit.co",
+) {
+  async function fetchJSON(
     method: string,
     endpoint: string,
     bodyObject?: Record<string, unknown>,
-  ): Promise<Response> {
-    const url = this.baseUrl + endpoint;
+  ): Promise<Record<string, unknown>> {
+    const url = baseUrl + endpoint;
 
     const headers = new Headers({
-      "Authorization": "Basic " + btoa(this.apiKey + ":"),
+      "Authorization": "Basic " + btoa(apiKey + ":"),
       "Content-Type": "application/json",
     });
 
-    return fetch(url, {
+    const response = await fetch(url, {
       method,
       headers,
       body: JSON.stringify(bodyObject),
     });
+
+    return response.json();
   }
+
+  return {
+    getEWalletCharge: function (
+      chargeID: string,
+    ) {
+      return fetchJSON(
+        "GET",
+        `/ewallets/charges/${chargeID}`,
+      );
+    },
+
+    simulateVAPayment: function (
+      bankCode: string,
+      bankAccountNumber: string,
+      transferAmount: string | number,
+    ) {
+      return fetchJSON(
+        "POST",
+        "/pool_virtual_accounts/simulate_payment",
+        {
+          "bank_code": bankCode,
+          "bank_account_number": bankAccountNumber,
+          "transfer_amount": transferAmount,
+        },
+      );
+    },
+  };
 }
