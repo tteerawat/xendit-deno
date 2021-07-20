@@ -48,5 +48,12 @@ export function xenditClient(
         },
       );
     },
+
+    getDisbursementByExternalID: function (externalID: string) {
+      return fetchJSON(
+        "GET",
+        `/disbursements?external_id=${externalID}`,
+      );
+    },
   };
 }
